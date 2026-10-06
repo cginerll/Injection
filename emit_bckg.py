@@ -8,8 +8,8 @@ Strategy — grid tiling
 Each scene is divided into a regular grid of non-overlapping tiles
 of size ``patch_height × patch_width``.  A tile is valid when:
 
-    1. It does not intersect the dilated plume mask (IMEO ∪ CM,
-       expanded by 5 pixels / ~300 m).
+    1. It does not intersect the dilated plume mask (IMEO + CM,
+       expanded by 5 pixels / 300 m).
     2. It contains no EMIT nodata pixels (−9999).
 
 All valid tiles across all scenes are collected and one is chosen
@@ -54,6 +54,9 @@ def get_emit_background(
     window : rasterio.windows.Window
         Spatial window used for extraction (needed to read co-located
         lat/lon later).
+    plume_mask_dilated : np.ndarray, shape ``(H_scene, W_scene)``
+        Dilated plume mask for the full scene (union of IMEO and CM,
+        expanded by 5 pixels).
     """
     tacoreader.use("pandas")
     df = tacoreader.load(str(data_dir)).data
@@ -112,7 +115,7 @@ def get_emit_background(
                 patch = src.read(window=window)
 
                 if not np.any(patch == EMIT_NODATA):
-                    return patch, scene_row, window
+                    return patch, scene_row, window, plume_mask_dilated
 
     raise RuntimeError(
         f"No valid {patch_height}x{patch_width} plume-free, nodata-free "
