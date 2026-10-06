@@ -160,12 +160,6 @@ def plot_bank_plumes(
             spine.set_edgecolor(colors[i % len(colors)])
             spine.set_linewidth(4)
 
-        print(
-            f"  [{i + 1}] {meta['id']}  type={meta['sim_type']}  "
-            f"wind={wind_speeds[i]:.1f} m/s @ {wind_dirs[i]:.0f}°  "
-            f"RAA={raas[i]:.0f}°"
-        )
-
     for j in range(n_plumes, nrows * ncols):
         axes[j // ncols, j % ncols].set_visible(False)
 
