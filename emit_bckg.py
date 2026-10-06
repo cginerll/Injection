@@ -83,7 +83,7 @@ def get_emit_background(
              rasterio.open(f"{scene_dir}/plume_cm.tif")   as f_cm:
             plume_mask = (f_imeo.read(1) > 0) | (f_cm.read(1) > 0)
 
-        plume_mask = binary_dilation(plume_mask, structure=dilation_kernel)
+        plume_mask_dilated = binary_dilation(plume_mask, structure=dilation_kernel)
 
         h, w = plume_mask.shape
         n_rows = h // patch_height
