@@ -104,7 +104,6 @@ def plot_scene_overview(
     )
     ax.add_patch(selected)
 
-    ax.set_title(f"Scene: {scene_row['id']}", fontsize=12)
     ax.set_xlabel("Cross-track (px)")
     ax.set_ylabel("Down-track (px)")
     plt.tight_layout()
