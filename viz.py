@@ -88,7 +88,7 @@ def plot_scene_overview(
     ax.imshow(mask_rgba)
     ax.contour(plume_mask_dilated, levels=[0.5], colors="red", linewidths=1.5)
 
-    H, W = plume_mask.shape
+    H, W = plume_mask_dilated.shape
     n_rows = H // patch_h
     n_cols = W // patch_w
     for r in range(n_rows + 1):
