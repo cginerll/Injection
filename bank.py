@@ -6,9 +6,9 @@ Loads and flattens the TACO catalogue once; all subsequent
 lookups run entirely in-memory.
 
 Matching strategy (sequential filtering):
-    1. wind_speed — snap to nearest grid value, filter exact
-    2. sza        — snap to nearest grid value, filter exact
-    3. raa        — snap to nearest value among remaining candidates
+    1. wind_speed -- snap to nearest grid value, filter exact
+    2. sza        -- snap to nearest grid value, filter exact
+    3. raa        -- snap to nearest value among remaining candidates
 
 Steps 1 and 2 use regular grids (all plumes exist at all values),
 so the intersection is never empty.  RAA varies per plume, so
