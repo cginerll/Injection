@@ -54,10 +54,10 @@ def resolve_wind_and_query_bank(
         If True, read ``wind.tif`` for per-source U/V.
     wind_speed:
         Fixed wind speed [m/s].  Ignored when *use_wind_field* is True.
-        ``None`` → random from bank grid.
+        ``None`` -> random from bank grid.
     wind_dir:
         Fixed wind direction [deg, math convention].  Ignored when
-        *use_wind_field* is True.  ``None`` → random 0–359.
+        *use_wind_field* is True.  ``None`` -> random 0-359.
 
     Returns
     -------
