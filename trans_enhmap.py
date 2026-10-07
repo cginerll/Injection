@@ -1,6 +1,6 @@
-# trans_enhmap.py
-
 """
+trans_enhmap.py
+
 Map a methane enhancement map from the plume bank onto an EMIT scene.
 
 The plume bank stores enhancement maps on a regular 20 m grid with a known
