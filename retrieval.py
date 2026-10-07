@@ -46,7 +46,7 @@ def load_original_retrievals(
 
     Returns
     -------
-    dict mapping method name → (H, W) retrieval map.
+    dict mapping method name -> (H, W) retrieval map.
     Only methods whose TIF exists in the scene are included.
     """
     result = {}
@@ -90,7 +90,7 @@ def run_retrievals(
     swir_range:
         SWIR wavelength range for retrieval [nm].
     methods:
-        dict mapping name → config class.  Defaults to
+        dict mapping name -> config class.  Defaults to
         ``{"mf": MFConfig, "rmf": RMFConfig, "mag1c": MAG1CConfig}``.
     batch_size:
         Columns per batch for retrieval.
@@ -101,7 +101,7 @@ def run_retrievals(
 
     Returns
     -------
-    dict mapping method name → (patch_h, patch_w) retrieval map.
+    dict mapping method name -> (patch_h, patch_w) retrieval map.
     """
     torch = _import_torch()
 
