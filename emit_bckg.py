@@ -3,14 +3,14 @@ emit_bckg.py
 
 Select a plume-free radiance patch from a random EMIT scene.
 
-Strategy — grid tiling
-----------------------
+Strategy -- grid tiling
+-----------------------
 Each scene is divided into a regular grid of non-overlapping tiles
-of size ``patch_height × patch_width``.  A tile is valid when:
+of size ``patch_height x patch_width``.  A tile is valid when:
 
     1. It does not intersect the dilated plume mask (IMEO + CM,
        expanded by 5 pixels / 300 m).
-    2. It contains no EMIT nodata pixels (−9999).
+    2. It contains no EMIT nodata pixels (-9999).
 
 All valid tiles across all scenes are collected and one is chosen
 at random.  This is O(n_tiles) per scene and avoids the
@@ -35,7 +35,7 @@ def get_emit_background(
 ) -> tuple[np.ndarray, dict, Window]:
     """Find a plume-free, nodata-free patch in a randomly chosen EMIT scene.
 
-    The scene is tiled into a regular grid of ``patch_height × patch_width``
+    The scene is tiled into a regular grid of ``patch_height x patch_width``
     blocks.  Tiles that overlap the dilated plume mask or contain EMIT
     nodata are discarded; one of the remaining tiles is selected at random.
 
@@ -65,7 +65,7 @@ def get_emit_background(
     indices = np.arange(len(df))
     np.random.shuffle(indices)
 
-    # Dilation kernel: 11×11 → 5-pixel margin around any flagged plume
+    # Dilation kernel: 11x11 -> 5-pixel margin around any flagged plume
     # pixel.  At EMIT's ~60 m GSD this is ~300 m of safety buffer.
     dilation_kernel = np.ones((11, 11), dtype=bool)
 
@@ -74,7 +74,7 @@ def get_emit_background(
 
         # Use string operations instead of Path() to preserve the
         # double slash in GDAL VSI paths (e.g. /vsicurl/https://...).
-        # Path() normalises "https://" → "https:/" which breaks rasterio.
+        # Path() normalises "https://" -> "https:/" which breaks rasterio.
         _vsi = scene_row["internal:gdal_vsi"]
         scene_dir = _vsi.rsplit("/", 1)[0]
 
