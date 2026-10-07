@@ -1,4 +1,6 @@
 """
+lut.py
+
 From https://github.com/UNEP-IMEO-MARS/marshsi/blob/main/marshsi
 
 Unified module for reading LUT (Look-Up Table) files for methane retrieval.
@@ -14,8 +16,6 @@ Units assumed throughout:
 - Transmittance: Unitless [0-1]
 - Air Mass Factor (AMF): Unitless geometric factor
 """
-
-# lut.py
 
 import os
 from typing import Tuple
@@ -38,7 +38,7 @@ def read_luts(amf: float, file_lut: str = FILE_LUT_GAS) -> Tuple[NDArray, NDArra
     of the current observation. It performs linear interpolation along the AMF axis.
 
     The effective optical path is defined by the Air Mass Factor (AMF):
-    AMF = 1/cos(θ_SZA) + 1/cos(θ_VZA)
+    AMF = 1/cos(theta_SZA) + 1/cos(theta_VZA)
 
     Args:
         amf (float): The specific Air Mass Factor for the observation.
@@ -78,7 +78,7 @@ def read_luts(amf: float, file_lut: str = FILE_LUT_GAS) -> Tuple[NDArray, NDArra
 
     # We create interpolators along Axis 0 (AMF) to map generic geometry -> specific observation geometry.
     # Method: Linear Interpolation
-    # Equation: y = y₀ + (x - x₀) · (y₁ - y₀) / (x₁ - x₀)
+    # Equation: y = y0 + (x - x0) * (y1 - y0) / (x1 - x0)
 
     # Input X: amf_arr (n_air_mass_factors,)
     # Input Y: t_arr_full (n_air_mass_factors, n_methane_ratios, n_model_wavelengths)
