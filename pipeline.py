@@ -4,8 +4,8 @@ pipeline.py
 Orchestrate the spectral injection of a methane enhancement map
 into an EMIT radiance cube.
 
-Chains: band selection → LUT interpolation → enhancement clamping →
-SRF convolution matrix → inject_plume.
+Chains: band selection -> LUT interpolation -> enhancement clamping ->
+SRF convolution matrix -> inject_plume.
 """
 
 from __future__ import annotations
@@ -61,7 +61,7 @@ def run_injection(
     if verbose:
         print(
             f"CH4 bands: {len(band_indices)} "
-            f"({emit_wvl[band_indices[0]]:.0f}–"
+            f"({emit_wvl[band_indices[0]]:.0f}-"
             f"{emit_wvl[band_indices[-1]]:.0f} nm)"
         )
 
