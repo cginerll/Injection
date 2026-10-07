@@ -471,7 +471,7 @@ def plot_retrieval_comparison(
             im = ax.imshow(
                 original_retrievals[name], cmap="plasma", vmin=vmin, vmax=vmax,
             )
-            fig.colorbar(im, ax=ax, label="ppm*m", shrink=0.8)
+            fig.colorbar(im, ax=ax, label=r"ppm$\cdot$m", shrink=0.8)
         else:
             ax.text(
                 0.5, 0.5, "not available", transform=ax.transAxes,
@@ -488,6 +488,6 @@ def plot_retrieval_comparison(
         )
         ax.set_title(f"{name.upper()} -- after")
         ax.axis("off")
-        fig.colorbar(im, ax=ax, label="ppm*m", shrink=0.8)
+        fig.colorbar(im, ax=ax, label=r"ppm$\cdot$m", shrink=0.8)
 
     plt.show()
