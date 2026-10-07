@@ -4,7 +4,7 @@ viz.py
 Plotting functions for the methane plume injection notebook.
 
 Each function produces one figure.  All take pre-computed data as
-arguments — no I/O, no computation beyond what's needed for layout.
+arguments -- no I/O, no computation beyond what's needed for layout.
 """
 
 from __future__ import annotations
@@ -309,7 +309,7 @@ def plot_enhancement_summary(
         ax2.imshow(rgba, interpolation="nearest")
         ax2.plot(
             [], [], "s", color=colors[i % len(colors)], markersize=10,
-            label=f"Plume {i + 1} — {q_targets[i]:.0f} kg/h",
+            label=f"Plume {i + 1} -- {q_targets[i]:.0f} kg/h",
         )
 
     ax2.legend(
@@ -384,7 +384,7 @@ def plot_spectral_comparison(
         label="With plume", color="tomato", linestyle="--",
     )
     ax2.set_xlabel("Wavelength (nm)")
-    ax2.set_title("SWIR zoom (2100–2500 nm)")
+    ax2.set_title("SWIR zoom (2100-2500 nm)")
     ax2.legend()
 
     fig.suptitle(
@@ -415,8 +415,8 @@ def plot_retrieval_comparison(
     ----------
     enhancement_total : (H, W)
     enhancements_ref : list of (H, W)
-    original_retrievals : dict  name → (H, W) array (pre-injection)
-    modified_retrievals : dict  name → (H, W) array (post-injection)
+    original_retrievals : dict  name -> (H, W) array (pre-injection)
+    modified_retrievals : dict  name -> (H, W) array (post-injection)
     patch_h, patch_w : int
     mask_threshold : float
     colors : list[str]
@@ -471,13 +471,13 @@ def plot_retrieval_comparison(
             im = ax.imshow(
                 original_retrievals[name], cmap="plasma", vmin=vmin, vmax=vmax,
             )
-            fig.colorbar(im, ax=ax, label="ppm·m", shrink=0.8)
+            fig.colorbar(im, ax=ax, label="ppm*m", shrink=0.8)
         else:
             ax.text(
                 0.5, 0.5, "not available", transform=ax.transAxes,
                 ha="center", va="center", fontsize=12, color="gray",
             )
-        ax.set_title(f"{name.upper()} — before")
+        ax.set_title(f"{name.upper()} -- before")
         ax.axis("off")
 
     # After (bottom row)
@@ -486,8 +486,8 @@ def plot_retrieval_comparison(
         im = ax.imshow(
             modified_retrievals[name], cmap="plasma", vmin=vmin, vmax=vmax,
         )
-        ax.set_title(f"{name.upper()} — after")
+        ax.set_title(f"{name.upper()} -- after")
         ax.axis("off")
-        fig.colorbar(im, ax=ax, label="ppm·m", shrink=0.8)
+        fig.colorbar(im, ax=ax, label="ppm*m", shrink=0.8)
 
     plt.show()
