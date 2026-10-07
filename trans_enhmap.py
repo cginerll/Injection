@@ -7,8 +7,8 @@ The plume bank stores enhancement maps on a regular 20 m grid with a known
 source position.  EMIT observes at ~60 m with an irregular pushbroom
 geometry (each pixel has its own lat/lon).
 
-Strategy — footprint integration
----------------------------------
+Strategy -- footprint integration
+----------------------------------
 Each EMIT pixel covers a quadrilateral footprint on the ground.
 The sensor measures the average concentration over that footprint:
 
@@ -19,22 +19,22 @@ We approximate this integral by:
     1. **Compute EMIT pixel corners** from pixel centres (midpoint of
        four neighbouring centres, linearly extrapolated at patch edges).
     2. **Project the four corners** of each pixel into bank-map
-       coordinates via WGS-84 → UTM → inverse affine.
-    3. **Sample N×N points** uniformly inside each quadrilateral
+       coordinates via WGS-84 -> UTM -> inverse affine.
+    3. **Sample NxN points** uniformly inside each quadrilateral
        via bilinear interpolation of the four corners, evaluate the
        (un-filtered) enhancement map at each point, and average.
 
 This naturally captures the real shape, orientation, and size of each
-EMIT pixel's footprint — including rotation from wind_dir, the non-square
-EMIT IFOV (155 × 74 µrad), and pushbroom distortion.  No pre-filtering
+EMIT pixel's footprint -- including rotation from wind_dir, the non-square
+EMIT IFOV (155 x 74 urad), and pushbroom distortion.  No pre-filtering
 is needed: the per-pixel integration IS the anti-aliasing.
 
 Coordinate transformation
 -------------------------
     EMIT pixel corner (lat, lon)
-      → UTM easting/northing (metres)
-        → bank pixel (col, row) via inverse affine
-          → sample enhancement with cubic interpolation
+      -> UTM easting/northing (metres)
+        -> bank pixel (col, row) via inverse affine
+          -> sample enhancement with cubic interpolation
 """
 
 from __future__ import annotations
@@ -54,7 +54,7 @@ from config import ENHANCEMENT_PIXEL_RES
 def _get_utm_transformer(
     ref_lat: float, ref_lon: float,
 ) -> tuple[Transformer, int]:
-    """Build a WGS-84 → UTM transformer for the zone of a reference point."""
+    """Build a WGS-84 -> UTM transformer for the zone of a reference point."""
     zone = int((ref_lon + 180) / 6) + 1
     epsg = 32600 + zone if ref_lat >= 0 else 32700 + zone
     t = Transformer.from_crs("EPSG:4326", f"EPSG:{epsg}", always_xy=True)
@@ -81,10 +81,10 @@ def _project_grid(
 
 
 def _inpaint_nan(arr: np.ndarray, max_iter: int = 50) -> np.ndarray:
-    """Replace NaN by iterative 3×3 mean of valid neighbours.
+    """Replace NaN by iterative 3x3 mean of valid neighbours.
 
     Prevents map_coordinates from seeing NaN (which it cannot handle)
-    without the artefact that NaN→0 creates near plume edges.
+    without the artefact that NaN->0 creates near plume edges.
     """
     out = arr.astype(np.float64, copy=True)
     for _ in range(max_iter):
@@ -112,11 +112,11 @@ def _build_bank_affine(
     pixel_res: float,
     wind_dir: float,
 ) -> Affine:
-    """Affine that maps bank pixel (col, row) → UTM (easting, northing).
+    """Affine that maps bank pixel (col, row) -> UTM (easting, northing).
 
     Composition (right to left):
         1. Centre on source.
-        2. Scale to metres, flip row axis (row-down → northing-up).
+        2. Scale to metres, flip row axis (row-down -> northing-up).
         3. Rotate by wind_dir (CCW from East).
         4. Translate to source UTM position.
     """
@@ -134,7 +134,7 @@ def _centers_to_corners(centers: np.ndarray) -> np.ndarray:
 
     Interior corners are the mean of the four surrounding centres.
     Edge and literal-corner values are linearly extrapolated so that
-    every pixel — including those on the patch boundary — has four
+    every pixel -- including those on the patch boundary -- has four
     well-defined corners.
     """
     H, W = centers.shape
@@ -170,7 +170,7 @@ def _centers_to_corners(centers: np.ndarray) -> np.ndarray:
 # ---------------------------------------------------------------------------
 
 def compute_pixel_areas(emit_lat: np.ndarray, emit_lon: np.ndarray) -> np.ndarray:
-    """Per-pixel area [m²] via the Jacobian of the lat/lon → UTM mapping.
+    """Per-pixel area [m^2] via the Jacobian of the lat/lon -> UTM mapping.
 
     Parameters
     ----------
@@ -178,7 +178,7 @@ def compute_pixel_areas(emit_lat: np.ndarray, emit_lon: np.ndarray) -> np.ndarra
 
     Returns
     -------
-    (H, W) areas in m².  NaN where coordinates are invalid.
+    (H, W) areas in m^2.  NaN where coordinates are invalid.
     """
     clat = float(emit_lat[emit_lat.shape[0] // 2, emit_lat.shape[1] // 2])
     clon = float(emit_lon[emit_lon.shape[0] // 2, emit_lon.shape[1] // 2])
@@ -214,10 +214,10 @@ def map_to_emit(
     """Map a bank enhancement onto an EMIT scene via footprint integration.
 
     For each EMIT pixel, the four corners of its footprint are projected
-    into bank coordinates.  N_sub × N_sub points are sampled uniformly
+    into bank coordinates.  N_sub x N_sub points are sampled uniformly
     inside the resulting quadrilateral, and the enhancement (un-filtered)
     is evaluated at each via cubic interpolation.  The average of the
-    N_sub² samples approximates the integral of the enhancement over
+    N_sub^2 samples approximates the integral of the enhancement over
     the pixel's real footprint.
 
     Parameters
@@ -236,7 +236,7 @@ def map_to_emit(
         Wind direction [deg, CCW from East].
     n_sub :
         Sub-samples per axis within each pixel footprint.
-        n_sub=4 → 16 samples per pixel.  Must be ≥ 1.
+        n_sub=4 -> 16 samples per pixel.  Must be >= 1.
 
     Returns
     -------
@@ -249,7 +249,7 @@ def map_to_emit(
     enh = _inpaint_nan(enhancement)
 
     # -- 2. Compute EMIT pixel corners ------------------------------------
-    #    (H, W) centres → (H+1, W+1) corners via midpoint averaging.
+    #    (H, W) centres -> (H+1, W+1) corners via midpoint averaging.
     #    Computed in lat/lon before any projection so the midpoints
     #    reflect the geographic positions, not a projected space.
     corner_lat = _centers_to_corners(emit_lat)
@@ -270,7 +270,7 @@ def map_to_emit(
         corner_lat, corner_lon, transformer, src_lon, src_lat,
     )
 
-    # Inverse affine: UTM → bank (col, row).
+    # Inverse affine: UTM -> bank (col, row).
     # NaN propagates naturally through arithmetic: any invalid corner
     # produces NaN bank coordinates.
     c_col = inv.a * east + inv.b * north + inv.c
@@ -292,17 +292,17 @@ def map_to_emit(
     # -- 5. Generate sub-pixel sample positions inside each footprint -----
     #    Bilinear interpolation of the four corners parametrises the
     #    quadrilateral interior:
-    #      P(s, t) = (1-s)(1-t)·NW + s(1-t)·NE + (1-s)t·SW + s·t·SE
+    #      P(s, t) = (1-s)(1-t)*NW + s(1-t)*NE + (1-s)t*SW + s*t*SE
     #
-    #    s ∈ (0,1) left→right,  t ∈ (0,1) top→bottom.
-    #    Sample points are the centres of n_sub × n_sub equal sub-cells.
+    #    s in (0,1) left->right,  t in (0,1) top->bottom.
+    #    Sample points are the centres of n_sub x n_sub equal sub-cells.
     s = (np.arange(n_sub) + 0.5) / n_sub      # e.g. [0.125, 0.375, 0.625, 0.875]
     t = (np.arange(n_sub) + 0.5) / n_sub
     ss, tt = np.meshgrid(s, t)
     ss = ss.ravel()                             # (K,)
     tt = tt.ravel()
 
-    # Bilinear weights — one per sub-sample, broadcast across all pixels.
+    # Bilinear weights -- one per sub-sample, broadcast across all pixels.
     w_nw = (1.0 - ss) * (1.0 - tt)             # (K,)
     w_ne = ss * (1.0 - tt)
     w_sw = (1.0 - ss) * tt
@@ -324,7 +324,7 @@ def map_to_emit(
     #    Cubic B-spline interpolation (order=3).  scipy applies a
     #    B-spline prefilter by default (prefilter=True) so the
     #    interpolant passes exactly through the original pixel values.
-    #    Anti-aliasing is handled separately by the N×N footprint
+    #    Anti-aliasing is handled separately by the NxN footprint
     #    averaging, not by the interpolation kernel.
     coords = np.array([sample_r.ravel(), sample_c.ravel()])
     values = map_coordinates(
